@@ -1,7 +1,7 @@
 package com.example.shoplist.domain
 
 class UpdateShopItemUseCase {
-    fun updateShopItem(){
+    fun updateShopItem(shopItem: ShopItem){
         TODO()
     }
 }
