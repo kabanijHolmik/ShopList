@@ -2,13 +2,11 @@ package com.example.shoplist.presentation
 
 import android.os.Bundle
 import android.util.Log
-import android.view.DragEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoplist.R
-import com.example.shoplist.domain.ShopItem
 
 
 class MainActivity : AppCompatActivity() {
@@ -22,7 +20,7 @@ class MainActivity : AppCompatActivity() {
 
         mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
         mainViewModel.shopList.observe(this){
-            adapter.shopList = it
+            adapter.submitList(it)
         }
 
     }
@@ -53,7 +51,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
-                val item = adapter.shopList[position]
+                val item = adapter.currentList[position]
                 mainViewModel.deleteShopItem(shopItem = item)
             }
         }
