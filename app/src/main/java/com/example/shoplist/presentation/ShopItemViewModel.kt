@@ -41,11 +41,9 @@ class ShopItemViewModel: ViewModel() {
         val count = parseCount(inputCount)
 
         if (validateInput(name, count)) {
-            _shopItem.value?.let {
-                val item = it.copy(name = name, count = count)
-                addShopItemUseCase.addShopItem(item)
-                finishWork()
-            }
+            val item = ShopItem(name, count, true)
+            addShopItemUseCase.addShopItem(item)
+            finishWork()
 
         }
 
@@ -58,7 +56,7 @@ class ShopItemViewModel: ViewModel() {
         if (validateInput(name, count)) {
             _shopItem.value?.let {
                 val item = it.copy(name = name, count = count)
-                addShopItemUseCase.addShopItem(item)
+                updateShopItemUseCase.updateShopItem(item)
                 finishWork()
             }
         }
