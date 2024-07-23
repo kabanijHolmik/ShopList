@@ -4,27 +4,36 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentContainerView
 import com.example.shoplist.R
 
 class ShopItemActivity : AppCompatActivity() {
 
     private var screenMode = MODE_UNKNOWN
     private var shopItemId = UNDEFINED_ID
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shop_item)
 
+
         if(intent.hasExtra(EXTRA_SCREEN_MODE)) screenMode = intent.getStringExtra(EXTRA_SCREEN_MODE)!!
         shopItemId = intent.getIntExtra(EXTRA_SHOP_ITEM_ID, UNDEFINED_ID)
 
+        if(savedInstanceState == null)
+        launchRightMode()
+
+    }
+
+    private fun launchRightMode() {
         val fragment = when (screenMode) {
             MODE_ADD -> ShopItemFragment.newInstanceAddItem()
             MODE_UPDATE -> ShopItemFragment.newInstanceUpdateItem(shopItemId)
             else -> throw RuntimeException("Unknown screen mode: $screenMode")
         }
 
-        supportFragmentManager.beginTransaction().add(R.id.shopItemContainer, fragment).commit()
-
+        supportFragmentManager.beginTransaction().replace(R.id.shopItemContainer, fragment).commit()
     }
 
 
