@@ -24,6 +24,11 @@ class ShopItemFragment : Fragment() {
     private var screenMode = MODE_UNKNOWN
     private var shopItemId = UNDEFINED_ID
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        parseParams()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -35,7 +40,6 @@ class ShopItemFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        parseParams()
         initViews(view)
 
         shopItemViewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
