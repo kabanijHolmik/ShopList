@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
@@ -34,7 +35,13 @@ class MainActivity : AppCompatActivity() {
         } else {
             buttonAddItem.setOnClickListener {
                 fragment = ShopItemFragment.newInstanceAddItem()
+                fragment!!.onEditingFinishedListener = object: ShopItemFragment.OnEditingFinishedListener{
+                    override fun onEditingFinished() {
+                        Toast.makeText(this@MainActivity, "Successfully", Toast.LENGTH_SHORT).show()
+                    }
+                }
                 startFragment()
+
             }
         }
 
@@ -97,6 +104,11 @@ class MainActivity : AppCompatActivity() {
             }
         else adapter.shopItemClickListener = {
             fragment = ShopItemFragment.newInstanceUpdateItem(it.id)
+            fragment!!.onEditingFinishedListener = object: ShopItemFragment.OnEditingFinishedListener{
+                override fun onEditingFinished() {
+                    Toast.makeText(this@MainActivity, "Successfully", Toast.LENGTH_SHORT).show()
+                }
+            }
             startFragment()
         }
 
@@ -108,6 +120,7 @@ class MainActivity : AppCompatActivity() {
             .beginTransaction().replace(R.id.fragmentContainerView, fragment!!)
             .addToBackStack("")
             .commit()
+
     }
 
     private fun setupLongClickListener() {

@@ -1,6 +1,8 @@
 package com.example.shoplist.presentation
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +16,7 @@ import com.google.android.material.textfield.TextInputLayout
 
 class ShopItemFragment : Fragment() {
     lateinit var shopItemViewModel: ShopItemViewModel
+    var onEditingFinishedListener: OnEditingFinishedListener? = null
 
     private lateinit var buttonSave: Button
     private lateinit var textInputLayoutName: TextInputLayout
@@ -24,8 +27,14 @@ class ShopItemFragment : Fragment() {
     private var screenMode = MODE_UNKNOWN
     private var shopItemId = UNDEFINED_ID
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        Log.d("Fragment", "onAttach")
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("Fragment", "OnCreate")
         parseParams()
     }
 
@@ -35,11 +44,13 @@ class ShopItemFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_shop_item, container, false)
+        Log.d("Fragment", "onCreateView")
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d("Fragment", "onViewCreated")
         initViews(view)
 
         shopItemViewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
@@ -70,6 +81,40 @@ class ShopItemFragment : Fragment() {
         }
     }
 
+    override fun onStart() {
+        Log.d("Fragment", "onStart")
+        super.onStart()
+    }
+
+    override fun onResume() {
+        Log.d("Fragment", "onResume")
+        super.onResume()
+    }
+
+    override fun onPause() {
+        Log.d("Fragment", "onPause")
+        super.onPause()
+    }
+
+    override fun onStop() {
+        Log.d("Fragment", "onStop")
+        super.onStop()
+    }
+
+    override fun onDestroyView() {
+        Log.d("Fragment", "onDestroyView")
+        super.onDestroyView()
+    }
+
+    override fun onDestroy() {
+        Log.d("Fragment", "onDestroy")
+        super.onDestroy()
+    }
+
+    override fun onDetach() {
+        Log.d("Fragment", "onDetach")
+        super.onDetach()
+    }
 
     private fun launchAddScreen() {
         buttonSave.setOnClickListener {
@@ -125,6 +170,10 @@ class ShopItemFragment : Fragment() {
         textInputLayoutCount = view.findViewById(R.id.textInputLayoutCount)
         textInputName = view.findViewById(R.id.textInputName)
         textInputCount = view.findViewById(R.id.textInputCount)
+    }
+
+    interface OnEditingFinishedListener{
+        fun onEditingFinished( )
     }
 
     companion object {

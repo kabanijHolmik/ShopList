@@ -17,13 +17,12 @@ class ShopItemActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shop_item)
 
+        if(savedInstanceState == null){
+            if(intent.hasExtra(EXTRA_SCREEN_MODE)) screenMode = intent.getStringExtra(EXTRA_SCREEN_MODE)!!
+            shopItemId = intent.getIntExtra(EXTRA_SHOP_ITEM_ID, UNDEFINED_ID)
 
-        if(intent.hasExtra(EXTRA_SCREEN_MODE)) screenMode = intent.getStringExtra(EXTRA_SCREEN_MODE)!!
-        shopItemId = intent.getIntExtra(EXTRA_SHOP_ITEM_ID, UNDEFINED_ID)
-
-        if(savedInstanceState == null)
-        launchRightMode()
-
+            launchRightMode()
+        }
     }
 
     private fun launchRightMode() {
