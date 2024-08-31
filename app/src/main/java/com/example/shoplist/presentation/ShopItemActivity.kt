@@ -26,7 +26,7 @@ class ShopItemActivity : AppCompatActivity() {
     }
 
     private fun launchRightMode() {
-        val fragment = when (screenMode) {
+        var fragment = when (screenMode) {
             MODE_ADD -> ShopItemFragment.newInstanceAddItem()
             MODE_UPDATE -> ShopItemFragment.newInstanceUpdateItem(shopItemId)
             else -> throw RuntimeException("Unknown screen mode: $screenMode")
@@ -49,6 +49,7 @@ class ShopItemActivity : AppCompatActivity() {
             intent.putExtra(EXTRA_SCREEN_MODE, MODE_ADD)
             return intent
         }
+
 
         fun newIntentEditItem(context: Context, shopItemId: Int): Intent {
             val intent = Intent(context, ShopItemActivity::class.java)

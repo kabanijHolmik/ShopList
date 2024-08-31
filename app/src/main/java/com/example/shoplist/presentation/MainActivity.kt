@@ -8,10 +8,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoplist.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlin.time.Duration
 
 
 class MainActivity : AppCompatActivity() {
@@ -45,13 +47,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
         setupRecyclerView()
 
-        mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        mainViewModel = ViewModelProvider(this)[MainViewModel(application)::class.java]
         mainViewModel.shopList.observe(this) {
             adapter.submitList(it)
         }
+
 
     }
 

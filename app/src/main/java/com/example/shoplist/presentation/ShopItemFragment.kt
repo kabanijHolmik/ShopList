@@ -53,7 +53,7 @@ class ShopItemFragment : Fragment() {
         Log.d("Fragment", "onViewCreated")
         initViews(view)
 
-        shopItemViewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
+        shopItemViewModel = ViewModelProvider(this)[ShopItemViewModel(requireActivity().application)::class.java]
 
         shopItemViewModel.errorInputName.observe(viewLifecycleOwner) {
             if (it)
@@ -131,8 +131,14 @@ class ShopItemFragment : Fragment() {
     private fun launchUpdateScreen() {
         shopItemViewModel.getShopItem(shopItemId)
 
-        textInputName.setText(shopItemViewModel.shopItem.value?.name)
-        textInputCount.setText(shopItemViewModel.shopItem.value?.count.toString())
+
+
+        shopItemViewModel.shopItem.observe(viewLifecycleOwner) { item ->
+            item?.let {
+                textInputName.setText(it.name)
+                textInputCount.setText(it.count.toString())
+            }
+        }
 
         buttonSave.setOnClickListener {
             shopItemViewModel.updateShopItem(
@@ -146,9 +152,12 @@ class ShopItemFragment : Fragment() {
     }
 
     private fun closeScreen() {
-        if (shopItemViewModel.isReadyToClose.value != null) {
-            activity?.onBackPressedDispatcher?.onBackPressed()
+        shopItemViewModel.isReadyToClose.observe(viewLifecycleOwner){
+            if (it != null) {
+                activity?.onBackPressedDispatcher?.onBackPressed()
+            }
         }
+
     }
 
     private fun parseParams() {
@@ -194,7 +203,11 @@ class ShopItemFragment : Fragment() {
                 putString(EXTRA_SCREEN_MODE, MODE_UPDATE)
                 putInt(EXTRA_SHOP_ITEM_ID, shopItemId)
             }
-            return ShopItemFragment().apply { arguments = args }
+
+            val fragment = ShopItemFragment()
+            fragment.arguments = args
+
+            return fragment
         }
 
     }
