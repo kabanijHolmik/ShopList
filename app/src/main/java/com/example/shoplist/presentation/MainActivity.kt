@@ -4,43 +4,71 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoplist.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlin.time.Duration
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var mainViewModel: MainViewModel
     private lateinit var adapter: ShopListAdapter
-
+    private var shopItemContainer: FragmentContainerView? = null
+    private var fragment: ShopItemFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        shopItemContainer = findViewById(R.id.fragmentContainerView)
         val buttonAddItem = findViewById<FloatingActionButton>(R.id.floatingActionButton)
-        buttonAddItem.setOnClickListener {
-            val intent = ShopItemActivity.newIntentAddItem(this)
-            startActivity(intent)
+
+        if (shopItemContainer == null) {
+            buttonAddItem.setOnClickListener {
+                val intent = ShopItemActivity.newIntentAddItem(this)
+                startActivity(intent)
+            }
+        } else {
+            buttonAddItem.setOnClickListener {
+                fragment = ShopItemFragment.newInstanceAddItem()
+                fragment!!.onEditingFinishedListener = object: ShopItemFragment.OnEditingFinishedListener{
+                    override fun onEditingFinished() {
+                        Toast.makeText(this@MainActivity, "Successfully", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                startFragment()
+
+            }
         }
+
         setupRecyclerView()
 
-        mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
-        mainViewModel.shopList.observe(this){
+        mainViewModel = ViewModelProvider(this)[MainViewModel(application)::class.java]
+        mainViewModel.shopList.observe(this) {
             adapter.submitList(it)
         }
 
+
     }
 
-    private fun setupRecyclerView(){
+    private fun setupRecyclerView() {
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         adapter = ShopListAdapter()
         recyclerView.adapter = adapter
-        recyclerView.recycledViewPool.setMaxRecycledViews(R.layout.item_enabled, ShopListAdapter.MAX_POOL_SIZE)
-        recyclerView.recycledViewPool.setMaxRecycledViews(R.layout.item_disabled, ShopListAdapter.MAX_POOL_SIZE)
+        recyclerView.recycledViewPool.setMaxRecycledViews(
+            R.layout.item_enabled,
+            ShopListAdapter.MAX_POOL_SIZE
+        )
+        recyclerView.recycledViewPool.setMaxRecycledViews(
+            R.layout.item_disabled,
+            ShopListAdapter.MAX_POOL_SIZE
+        )
 
         setupLongClickListener()
 
@@ -71,10 +99,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupClickListener() {
-        adapter.shopItemClickListener = {
-            val intent = ShopItemActivity.newIntentEditItem(this, it.id)
-            startActivity(intent)
+        if (shopItemContainer == null)
+            adapter.shopItemClickListener = {
+                val intent = ShopItemActivity.newIntentEditItem(this, it.id)
+                startActivity(intent)
+            }
+        else adapter.shopItemClickListener = {
+            fragment = ShopItemFragment.newInstanceUpdateItem(it.id)
+            fragment!!.onEditingFinishedListener = object: ShopItemFragment.OnEditingFinishedListener{
+                override fun onEditingFinished() {
+                    Toast.makeText(this@MainActivity, "Successfully", Toast.LENGTH_SHORT).show()
+                }
+            }
+            startFragment()
         }
+
+    }
+
+    private fun startFragment() {
+        supportFragmentManager.popBackStack()
+        supportFragmentManager
+            .beginTransaction().replace(R.id.fragmentContainerView, fragment!!)
+            .addToBackStack("")
+            .commit()
 
     }
 
